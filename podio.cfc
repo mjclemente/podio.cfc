@@ -67,14 +67,6 @@ component output="false" displayname="podio.cfc"  {
     var data = { 'grant_type' : grantType };
     data.append( credentials );
 
-    var authType = {
-      'type' : grantType
-    };
-
-    if ( grantType == 'password' )
-      authType[ 'identifier' ] = credentials.username;
-    else if ( grantType == 'app' )
-      authType[ 'identifier' ] = credentials.app_id;
     data[ 'client_id' ] = variables.clientId;
     data[ 'client_secret' ] = variables.clientSecret;
 
