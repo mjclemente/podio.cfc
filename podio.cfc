@@ -26,6 +26,17 @@ component output="false" displayname="podio.cfc"  {
 
     structAppend( variables, arguments );
 
+    if ( oauth.isEmpty() )
+      variables.oauth = {
+        'access_token' = '',
+        'refresh_token' = '',
+        'expires_in' = '',
+        'type' = {
+          'type' = '',
+          'id' = ''
+        }
+      };
+
     return this;
   }
 
