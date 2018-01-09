@@ -60,7 +60,10 @@ component output="false" displayname="podio.cfc"  {
     return authenticate( 'refresh_token', credentials );
   }
 
-  public void function authenticate( required string grantType, required struct credentials ) {
+  /**
+  * @hint technically this doesn't need to return anything, or could simply return a boolean. However, to make debugging a little clearer, it's returning the oauth object that gets created.
+  */
+  public struct function authenticate( required string grantType, required struct credentials ) {
     var data = { 'grant_type' : grantType };
     data.append( credentials );
 
