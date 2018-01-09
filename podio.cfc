@@ -91,6 +91,11 @@ component output="false" displayname="podio.cfc"  {
     return variables.oauth;
   }
 
+  /**
+  * @hint makes sure that the token is present and has at least one minute remaining before expiration
+  */
+  public boolean function isAuthenticated() {
+    return variables.keyExists( 'oauth' ) && variables.oauth.access_token.len() && variables.oauth.expiration.diff( 'n', now() ) >= 1;
   }
 
   // API CALL RELATED PRIVATE FUNCTIONS
