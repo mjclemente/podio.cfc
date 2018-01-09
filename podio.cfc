@@ -74,10 +74,17 @@ component output="false" displayname="podio.cfc"  {
       'Content-Type' = 'application/x-www-form-urlencoded'
     };
 
-    var shit = apiCall( 'POST', '/oauth/token', data, {}, headers );
-    writeDump( var='#shit#', format='html', abort='true' );
+    var accessRequest = apiCall( 'POST', '/oauth/token', data, {}, headers );
 
+    if ( !accessRequest.keyExists( 'statusCode' ) || accessRequest.statusCode != 200 )
+      throw( 'An error occurred while requesting a Podio access token.' );
+    else
+      variables[ 'oauth' ] = accessRequest.data;
 
+    //we're gonna set a stamp for when the token expires
+    variables[ 'oauth' ][ 'expiration' ] = now().add( 's', accessRequest.data.expires_in );
+
+    //if there was an internal session manager, it's data would be set here. But after working on it for a while, the internal session management approach seems fraught with problems and unneded complexity. If you want to manage your tokens, do it outside this component, and pass in the stored oauth struct when creating this.
 
   }
 
