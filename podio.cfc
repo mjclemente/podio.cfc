@@ -109,6 +109,10 @@ component output="false" displayname="podio.cfc"  {
     return variables.keyExists( 'oauth' ) && variables.oauth.access_token.len() && variables.oauth.expiration.diff( 'n', now() ) >= 1;
   }
 
+  public struct function getOauth() {
+    return variables.oauth;
+  }
+
   // API CALL RELATED PRIVATE FUNCTIONS
   private struct function apiCall(
     required string httpMethod,
