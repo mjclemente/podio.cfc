@@ -16,10 +16,16 @@
 */
 component output="false" displayname="podio.cfc"  {
 
-  public any function init( required string clientId, required string clientSecret, string baseUrl = "https://api.podio.com",  numeric httpTimeout = 60, boolean includeRaw = true ) {
+  public any function init(
+    required string clientId,
+    required string clientSecret,
+    struct oauth = {},
+    string baseUrl = "https://api.podio.com",
+    numeric httpTimeout = 60,
+    boolean includeRaw = true ) {
+
     structAppend( variables, arguments );
-    variables[ 'oauth' ] = {};
-    variables[ 'authType' ] = {};
+
     return this;
   }
 
