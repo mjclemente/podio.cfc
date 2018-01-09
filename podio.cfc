@@ -86,6 +86,11 @@ component output="false" displayname="podio.cfc"  {
 
     //if there was an internal session manager, it's data would be set here. But after working on it for a while, the internal session management approach seems fraught with problems and unneded complexity. If you want to manage your tokens, do it outside this component, and pass in the stored oauth struct when creating this.
 
+    //along the same lines, there's also no reason to store the authType here, like the official podio libraries do. The authType is only used to generate an identifier for the session manager, which can be handled outside this component
+
+    return variables.oauth;
+  }
+
   }
 
   // API CALL RELATED PRIVATE FUNCTIONS
