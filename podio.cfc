@@ -16,11 +16,51 @@
 */
 component output="false" displayname="podio.cfc"  {
 
-  public any function init( required string clientId, required string clientSecret, string baseUrl = "https://api.podio.com",  numeric httpTimeout = 60, boolean includeRaw = true ) {
+  public any function init( required string clientId, required string clientSecret, string baseUrl = "https://api.podio.com",  numeric httpTimeout = 60, boolean includeRaw = true, any sessionManager = '' ) {
+
     structAppend( variables, arguments );
-    variables[ 'oauth' ] = {};
-    variables[ 'authType' ] = {};
+
+    //if the session manager is a string, use it to make a new object
+    if ( isSimpleValue( variables.sessionManager ) && variables.sessionManager.len() )
+      variables[ 'sessionManager' ] = new '#arguments.sessionManager#'();
+
+    //unset sessionManager it doesn't have required methods
+    if ( isObject( variables.sessionManager ) && ( !structKeyExists( variables.sessionManager, 'get' ) || !structKeyExists( variables.sessionManager, 'set' ) ) )
+      variables[ 'sessionManager' ] = '';
+
+    //credentials struct is used if there is no session manager
+    variables[ 'credentials' ] = {};
+
+    variables[ 'oauth' ] = returnTokenFromMemory();
+
     return this;
+  }
+
+  /**
+  * @hint
+  */
+  public struct function returnTokenFromMemory( struct authType = {} ) {
+    var auth = {};
+    //if we have a session manager, use it
+    if ( hasSessionManager() )
+      auth = variables.sessionManager.get( authType = authType);
+    else
+      auth = getCredentials( authType = authType );
+
+    //if not set by session manager
+    if ( auth.isEmpty() ) {
+      auth = {
+        'access_token' = '',
+        'refresh_token' = '',
+        'expires_in' = '',
+        'type' = {
+          'type' = '',
+          'id' = ''
+        }
+      };
+    }
+
+    return auth;
   }
 
   public struct function authenticateWithApp( required numeric appID, required string appToken ) {
@@ -54,18 +94,23 @@ component output="false" displayname="podio.cfc"  {
     return authenticate( 'refresh_token', credentials );
   }
 
-  public void function authenticate( required string grantType, required struct credentials ) {
+  /**
+  * @hint technically this doesn't need to return anything, or could simply return a boolean. However, to make debugging a little clearer, it's returning the oauth object that gets created.
+  */
+  public struct function authenticate( required string grantType, required struct credentials ) {
     var data = { 'grant_type' : grantType };
     data.append( credentials );
 
     var authType = {
-      'type' : grantType
+      'type' : grantType,
+      'identifier' : ''
     };
 
     if ( grantType == 'password' )
       authType[ 'identifier' ] = credentials.username;
     else if ( grantType == 'app' )
       authType[ 'identifier' ] = credentials.app_id;
+
     data[ 'client_id' ] = variables.clientId;
     data[ 'client_secret' ] = variables.clientSecret;
 
@@ -73,11 +118,70 @@ component output="false" displayname="podio.cfc"  {
       'Content-Type' = 'application/x-www-form-urlencoded'
     };
 
-    var shit = apiCall( 'POST', '/oauth/token', data, {}, headers );
-    writeDump( var='#shit#', format='html', abort='true' );
+    var accessRequest = apiCall( 'POST', '/oauth/token', data, {}, headers );
 
+    if ( !accessRequest.keyExists( 'statusCode' ) || accessRequest.statusCode != 200 )
+      throw( 'An error occurred while requesting a Podio access token.' );
+    else
+      variables[ 'oauth' ] = accessRequest.data;
 
+    //we're gonna set a stamp for when the token expires
+    variables[ 'oauth' ][ 'expiration' ] = now().add( 's', accessRequest.data.expires_in );
 
+    // Don't touch auth_type if we are refreshing automatically as it'll be reset to null
+    if ( grantType != 'refresh_token' )
+      variables[ 'authType' ] = authType;
+
+    if ( hasSessionManager() )
+      variables.sessionManager.set( oauth = variables.oauth, authType = authType );
+    else
+      setCredentials( oauth = variables.oauth, authType = authType );
+
+    return variables.oauth;
+  }
+
+  /**
+  * @hint makes sure that the token is present and has at least one minute remaining before expiration
+  */
+  public boolean function isAuthenticated() {
+    return variables.keyExists( 'oauth' ) && variables.oauth.access_token.len() && variables.oauth.expiration.diff( 'n', now() ) >= 1;
+  }
+
+  private boolean function hasSessionManager() {
+    return isObject( variables.sessionManager );
+  }
+
+  /******************************************************
+  * Methods for internally handling credentials, if there is no external session manager
+  ******************************************************/
+
+  /**
+  * @hint If there is no session manager, we will attempt to retrieve the credentials from within the object itself
+  */
+  private struct function getCredentials( struct authType = {} ) {
+    if ( authType.isEmpty() )
+      return {};
+
+    var cacheKey = returnCacheKey( authType );
+
+    return variables.credentials.keyExists( cacheKey )
+      ? variables.credentials[ cacheKey ]
+      : {};
+  }
+
+  /**
+  * @hint If there is no session manager, we will store the credentials within the object itself
+  */
+  private void function setCredentials( required struct oauth, required struct authType ) {
+    var cacheKey = returnCacheKey( authType );
+    variables.credentials[ '#cacheKey#' ] = oauth;
+  }
+
+  /**
+  * @hint helper for internal credential storing methods
+  */
+  private string function returnCacheKey( required struct authType ) {
+    return 'internalCache_' & authType.type & '_' & authType.identifier;
   }
 
   // API CALL RELATED PRIVATE FUNCTIONS
