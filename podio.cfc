@@ -38,6 +38,8 @@ component output="false" displayname="podio.cfc"  {
         }
       };
 
+    variables.oauthPath = '/oauth/token'; //because it's used more than once
+
     return this;
   }
 
@@ -86,7 +88,7 @@ component output="false" displayname="podio.cfc"  {
       'Content-Type' = 'application/x-www-form-urlencoded'
     };
 
-    var accessRequest = apiCall( 'POST', '/oauth/token', data, {}, headers );
+    var accessRequest = apiCall( 'POST', variables.oauthPath, data, {}, headers );
 
     if ( !accessRequest.keyExists( 'statusCode' ) || accessRequest.statusCode != 200 )
       throw( 'An error occurred while requesting a Podio access token.' );
