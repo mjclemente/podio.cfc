@@ -169,10 +169,14 @@ component output="false" displayname="podio.cfc"  {
   }
 
   private struct function getBaseHttpHeaders() {
-    return {
+    var headers = {
       'Content-Type' : 'application/json',
       'User-Agent' : 'podio.cfc'
     };
+    if ( isAuthenticated() && !hasExpiredToken() )
+      headers[ 'Authorization' ] = 'OAuth2 #variables.oauth.access_token#';
+
+    return headers;
   }
 
   private any function makeHttpRequest(
