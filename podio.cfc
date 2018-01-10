@@ -126,6 +126,19 @@ component output="false" displayname="podio.cfc"  {
     return isAuthenticated() && variables.oauth.expiration.diff( 's', now() ) < 60;
   }
 
+  /**
+  * Applications
+  * https://developers.podio.com/doc/applications
+  */
+
+  /**
+  * https://developers.podio.com/doc/applications/get-all-apps-5902728
+  * @hint Returns all the apps for the active user. Note, this method will fail if you authenticate as an `app` and try to call it. You must be authenticated as a user.
+  */
+  public struct function listApps() {
+    return apiCall( 'GET', "/app" );
+  }
+
   // API CALL RELATED PRIVATE FUNCTIONS
   private struct function apiCall(
     required string httpMethod,
