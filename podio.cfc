@@ -31,6 +31,7 @@ component output="false" displayname="podio.cfc"  {
         'access_token' = '',
         'refresh_token' = '',
         'expires_in' = '',
+        'expiration' = now(),
         'type' = {
           'type' = '',
           'id' = ''
