@@ -124,6 +124,10 @@ component output="false" displayname="podio.cfc"  {
     any body = '',
     struct headers = { } )  {
 
+    //if we need to refresh the token (and it's not already a token request)
+    if ( hasExpiredToken() && path != variables.oauthPath )
+      refreshAccessToken();
+
     var fullApiPath = variables.baseUrl & path;
     var requestHeaders = getBaseHttpHeaders();
     requestHeaders.append( headers, true );
