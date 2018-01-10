@@ -119,6 +119,13 @@ component output="false" displayname="podio.cfc"  {
     return variables.oauth;
   }
 
+  /**
+  * @hint Confirms that 1) there is an authentication token, and 2) that is either is expired, or will expire in the next minute
+  */
+  private boolean function hasExpiredToken() {
+    return isAuthenticated() && variables.oauth.expiration.diff( 's', now() ) < 60;
+  }
+
   // API CALL RELATED PRIVATE FUNCTIONS
   private struct function apiCall(
     required string httpMethod,
