@@ -112,6 +112,9 @@ component output="false" displayname="podio.cfc"  {
     return variables.oauth.access_token.len();
   }
 
+  /**
+  * @hint Convenience method for returning the authentication token being used. Useful, perhaps, if you're managing these tokens externally
+  */
   public struct function getOauth() {
     return variables.oauth;
   }
