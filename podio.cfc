@@ -106,10 +106,10 @@ component output="false" displayname="podio.cfc"  {
   }
 
   /**
-  * @hint makes sure that the token is present and has at least one minute remaining before expiration
+  * @hint makes sure that the token is present
   */
   public boolean function isAuthenticated() {
-    return variables.keyExists( 'oauth' ) && variables.oauth.access_token.len() && variables.oauth.expiration.diff( 'n', now() ) >= 1;
+    return variables.oauth.access_token.len();
   }
 
   public struct function getOauth() {
