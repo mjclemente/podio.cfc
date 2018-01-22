@@ -158,6 +158,14 @@ component output="false" displayname="podio.cfc"  {
   /**
 
   /**
+  * https://developers.podio.com/doc/items/get-item-field-values-22368
+  * @hint Returns the values for a specified field on an item. Data is returned as an array. The array is empty if the field value has not been set.
+  */
+  public struct function getItemFieldValue( required numeric itemId, required numeric fieldId ) {
+    return apiCall( 'GET', "/item/#itemId#/value/#fieldId#" );
+  }
+
+  /**
   * https://developers.podio.com/doc/items/update-item-field-values-22367
   * @hint Update the item values for a specific field. The identifier for the field can either be the field_id or the external_id for the field.
   * @field can be either the field Id or the external Id
