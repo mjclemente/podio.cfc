@@ -138,6 +138,16 @@ component output="false" displayname="podio.cfc"  {
   public struct function getApp( required numeric appId ) {
     return apiCall( 'GET', "/app/#appId#" );
   }
+
+  /**
+  * https://developers.podio.com/doc/applications/get-app-field-22353
+  * @hint Returns a single field from an app.
+  */
+  public struct function getAppField( required numeric appId, required numeric fieldId ) {
+    return apiCall( 'GET', "/app/#appId#/field/#fieldId#" );
+  }
+
+  /**
   * https://developers.podio.com/doc/applications/get-all-apps-5902728
   * @hint Returns all the apps for the active user. Note, this method will fail if you authenticate as an `app` and try to call it. You must be authenticated as a user.
   */
