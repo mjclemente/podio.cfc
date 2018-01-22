@@ -156,6 +156,21 @@ component output="false" displayname="podio.cfc"  {
   }
 
   /**
+
+  /**
+  * https://developers.podio.com/doc/items/update-item-field-values-22367
+  * @hint Update the item values for a specific field. The identifier for the field can either be the field_id or the external_id for the field.
+  * @field can be either the field Id or the external Id
+  */
+  public struct function updateItemFieldValue( required numeric itemId, required any field, required array values, boolean hook = true, boolean silent = false ) {
+    var params = {
+      'hook' : hook,
+      'silent' : silent
+    };
+    return apiCall( 'PUT', "/item/#itemId#/value/#field#", params, values );
+  }
+
+  /**
   * https://developers.podio.com/doc/items/filter-items-4496747
   * @hint Filters the items and returns the matching items.
   */
