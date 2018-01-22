@@ -158,6 +158,22 @@ component output="false" displayname="podio.cfc"  {
   /**
 
   /**
+  * Items
+  * https://developers.podio.com/doc/items
+  */
+
+  /**
+  * https://developers.podio.com/doc/items/get-item-22360
+  * @hint Returns the item with the specified id.
+  */
+  public struct function getItem( required numeric itemId, boolean markAsViewed = true ) {
+    var params = {
+      'mark_as_viewed' : markAsViewed
+    };
+    return apiCall( 'GET', "/item/#itemId#", params );
+  }
+
+  /**
   * https://developers.podio.com/doc/items/get-item-field-values-22368
   * @hint Returns the values for a specified field on an item. Data is returned as an array. The array is empty if the field value has not been set.
   */
