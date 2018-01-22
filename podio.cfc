@@ -225,8 +225,35 @@ component output="false" displayname="podio.cfc"  {
   * https://developers.podio.com/doc/items/filter-items-4496747
   * @hint Filters the items and returns the matching items.
   */
-  public struct function filterItems( required numeric appId ) {
-    return apiCall( 'POST', "/item/app/#appId#/filter" );
+  public struct function filterItems( required numeric appId, string sortBy = '', boolean sortDesc = true, struct filters = {}, numeric limit = 30, numeric offset = 0, boolean remember = false ) {
+    var body = {
+      'sort_desc' : sortDesc,
+      'limit' : limit,
+      'remember' : remember
+    };
+
+    if ( sortBy.len() )
+      body[ 'sort_by' ] = sortBy;
+    if ( !filters.isEmpty() )
+      body[ 'filters' ] = filters;
+    if ( offset )
+      body[ 'offset' ] = offset;
+
+    return apiCall( 'POST', "/item/app/#appId#/filter", {}, body );
+  }
+
+  /**
+  * https://developers.podio.com/doc/items/get-references-to-item-by-field-7403920
+  * @hint Returns all the references to the item from the given field
+  */
+  public struct function getItemReferencesByField( required numeric itemID, required numeric fieldId, numeric limit = 20, numeric offset = 0 ) {
+    var params = {
+      'limit' : limit
+    };
+    if ( offset )
+      params[ 'offset' ] = offset;
+
+    return apiCall( 'GET', "/item/#itemId#/reference/field/#fieldId#", params );
   }
 
   // API CALL RELATED PRIVATE FUNCTIONS
