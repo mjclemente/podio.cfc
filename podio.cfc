@@ -132,6 +132,12 @@ component output="false" displayname="podio.cfc"  {
   */
 
   /**
+  * https://developers.podio.com/doc/applications/get-app-22349
+  * @hint Gets the definition of an app and can include configuration and fields. This method will always return the latest revision of the app definition.
+  */
+  public struct function getApp( required numeric appId ) {
+    return apiCall( 'GET', "/app/#appId#" );
+  }
   * https://developers.podio.com/doc/applications/get-all-apps-5902728
   * @hint Returns all the apps for the active user. Note, this method will fail if you authenticate as an `app` and try to call it. You must be authenticated as a user.
   */
