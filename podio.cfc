@@ -155,6 +155,14 @@ component output="false" displayname="podio.cfc"  {
     return apiCall( 'GET', "/app" );
   }
 
+  /**
+  * https://developers.podio.com/doc/items/filter-items-4496747
+  * @hint Filters the items and returns the matching items.
+  */
+  public struct function filterItems( required numeric appId ) {
+    return apiCall( 'POST', "/item/app/#appId#/filter" );
+  }
+
   // API CALL RELATED PRIVATE FUNCTIONS
   private struct function apiCall(
     required string httpMethod,
