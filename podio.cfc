@@ -156,6 +156,16 @@ component output="false" displayname="podio.cfc"  {
   }
 
   /**
+  * https://developers.podio.com/doc/applications/get-features-43648
+  * @hint Returns the features that the given apps and optionally space includes.
+  */
+  public struct function listFeaturesByApps( required array appIds, boolean includeSpace = false ) {
+    var params = {
+      'app_ids' = appIds,
+      'include_space' = includeSpace
+    };
+    return apiCall( 'GET', "/app/features", params );
+  }
 
   /**
   * Items
