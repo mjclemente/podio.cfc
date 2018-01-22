@@ -168,6 +168,22 @@ component output="false" displayname="podio.cfc"  {
   }
 
   /**
+  * Views
+  * https://developers.podio.com/doc/filters
+  */
+
+  /**
+  * https://developers.podio.com/doc/views/get-views-27460
+  * @hint Returns the views on the given app.
+  */
+  public struct function listViewsByApp( required numeric appId, boolean includeStandardViews = false ) {
+    var params = {
+      'include_standard_views' : includeStandardViews
+    };
+    return apiCall( 'GET', "/view/app/#appId#", params );
+  }
+
+  /**
   * Items
   * https://developers.podio.com/doc/items
   */
